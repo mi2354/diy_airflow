@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Callable, Protocol, runtime_checkable
+from typing import Callable
 import croniter
 
 

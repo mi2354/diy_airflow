@@ -28,7 +28,7 @@ def get_pipeline_from_file(filepath: str) -> Optional[Pipeline]:
         sys.modules["module.name"] = mod
         spec.loader.exec_module(mod)
         if hasattr(mod, "pipeline") and isinstance(mod.pipeline, Pipeline):
-            print(f"Found pipeline in {filepath}")
+            print(f"Found pipeline '{mod.pipeline.name}' in {filepath}")
             return mod.pipeline
 
 
