@@ -3,8 +3,8 @@ from typing import Callable, Protocol, runtime_checkable
 import croniter
 
 
-@runtime_checkable
-class Pipeline(Protocol):
+@dataclass
+class Pipeline:
     name: str
     schedule: str
     python_callable: Callable

@@ -9,7 +9,7 @@ from diy_airflow.utils import process_filepath
 class Handler(FileSystemEventHandler):
     @staticmethod
     def on_any_event(event):
-        if event.is_directory:
+        if event.is_directory or event.src_path.endswith('pyc'):
             return None
 
         elif event.event_type == "created":
@@ -21,9 +21,6 @@ class Handler(FileSystemEventHandler):
             print(f"Received modified event - {event.src_path}.")
 
         process_filepath(event.src_path)
-
-
-
 
 
 class Watcher:

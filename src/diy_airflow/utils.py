@@ -27,9 +27,9 @@ def get_pipeline_from_file(filepath: str) -> Optional[Pipeline]:
         mod = module_from_spec(spec)
         sys.modules["module.name"] = mod
         spec.loader.exec_module(mod)
-        if hasattr(mod, "Pipeline") and isinstance(mod.Pipeline, Pipeline):
+        if hasattr(mod, "pipeline") and isinstance(mod.pipeline, Pipeline):
             print(f"Found pipeline in {filepath}")
-            return mod.Pipeline
+            return mod.pipeline
 
 
 def send_to_queue(pipeline: Pipeline) -> None:
