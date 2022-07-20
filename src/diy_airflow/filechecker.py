@@ -2,7 +2,7 @@ import time
 from diy_airflow.data_model import Pipeline
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-from .utils import process_filepath
+from diy_airflow.utils import process_filepath
 
 # Shamelessly stolen from Ivan
 
@@ -41,6 +41,6 @@ class Watcher:
                 time.sleep(5)
         except:
             self.observer.stop()
-            print("Watchdog Error!!")
+            print("Stopped monitoring!")
 
         self.observer.join()

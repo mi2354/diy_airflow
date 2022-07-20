@@ -1,9 +1,10 @@
-from modulefinder import ModuleFinder
+import sys
+from importlib.util import module_from_spec, spec_from_file_location
 from os import listdir
 from os.path import isfile, join
 from typing import List, Optional
 
-from .data_model import Pipeline
+from diy_airflow.data_model import Pipeline
 
 
 def get_files_from_dir(dirpath: str) -> List[str]:
@@ -11,15 +12,24 @@ def get_files_from_dir(dirpath: str) -> List[str]:
 
 
 def get_pipeline_from_file(filepath: str) -> Optional[Pipeline]:
-    if filepath.endswith('.py'):
-        finder = ModuleFinder()
-        finder.run_script(filepath)
-        for name, mod in finder.modules.items():
-            if isinstance(mod, Pipeline):
-                print(f"Pipeline {mod.name} in file {filepath}")
-                return mod
-        print(f'No pipeline found in {filepath}')
+    """
+    Given a file.py, return the Pipeline instance that is inside, if there is any
 
+    Args:
+        filepath (str): a file path "example.py"
+
+    Returns:
+        Optional[Pipeline]: A Pipeline instance if there is any inside the
+                            script in filepath, else None
+    """
+    if filepath.endswith('.py'):
+        spec = spec_from_file_location("module.name", filepath)
+        mod = module_from_spec(spec)
+        sys.modules["module.name"] = mod
+        spec.loader.exec_module(mod)
+        if hasattr(mod, "Pipeline") and isinstance(mod.Pipeline, Pipeline):
+            print(f"Found pipeline in {filepath}")
+            return mod.Pipeline
 
 
 def send_to_queue(pipeline: Pipeline) -> None:

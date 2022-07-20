@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Protocol, runtime_checkable
 import croniter
 
 
-@dataclass
-class Pipeline:
+@runtime_checkable
+class Pipeline(Protocol):
     name: str
     schedule: str
     python_callable: Callable
