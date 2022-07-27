@@ -1,11 +1,11 @@
-from datetime import date, datetime
+from datetime import datetime
 from queue import PriorityQueue
+from typing import Optional
 
 from croniter import croniter
 from wasabi import msg
 
 from diy_airflow.data_model import Pipeline
-from typing import Optional
 from diy_airflow.utils import run_pipeline
 
 
@@ -14,10 +14,16 @@ class Scheduler:
         self.q = PriorityQueue(maxsize=100)
 
     def add_pipeline(self, pipeline: Optional[Pipeline]) -> None:
+        """
+        Add pipeline to queue
+        """
         if isinstance(pipeline, Pipeline):
             self.q.put(pipeline)
 
     def run(self):
+        """
+        Check next pipeline to be executed in the queue and run it if possible
+        """
         if not self.q.empty():
             pipeline: Pipeline = self.q.get()
             pipeline_start_date = pipeline.start_date

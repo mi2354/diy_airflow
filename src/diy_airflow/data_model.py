@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Callable
+from typing import Callable, List
+
 from croniter import croniter
-from typing import List
 
 
 @dataclass

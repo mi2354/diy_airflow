@@ -3,13 +3,10 @@ from importlib.util import module_from_spec, spec_from_file_location
 from os import listdir
 from os.path import isfile, join
 from typing import List, Optional
+
 from wasabi import msg
 
 from diy_airflow.data_model import Pipeline, validate_pipeline
-
-from os import listdir
-from os.path import isfile, join
-from typing import List, Optional
 
 
 def get_files_from_dir(dirpath: str) -> List[str]:

@@ -12,6 +12,10 @@ class Watcher:
         self.files = {}
 
     def monitor(self):
+        """
+        Check if there are changes in self.directory_to_watch and if so
+        get the pipelines and adds them to the scheduler
+        """
         dirfiles = get_files_from_dir(self.directory_to_watch)
         for filepath in dirfiles:
             modification_time = os.path.getmtime(filepath)
