@@ -5,6 +5,7 @@ from os.path import isfile, join
 from typing import List, Optional
 
 from diy_airflow.data_model import Pipeline
+from diy_airflow.scheduler import send_to_queue
 
 
 def get_files_from_dir(dirpath: str) -> List[str]:
@@ -30,11 +31,6 @@ def get_pipeline_from_file(filepath: str) -> Optional[Pipeline]:
         if hasattr(mod, "pipeline") and isinstance(mod.pipeline, Pipeline):
             print(f"Found pipeline '{mod.pipeline.name}' in {filepath}")
             return mod.pipeline
-
-
-def send_to_queue(pipeline: Pipeline) -> None:
-    print('Pipeline sent to queue')
-    pass
 
 
 def process_filepath(filepath: str) -> None:

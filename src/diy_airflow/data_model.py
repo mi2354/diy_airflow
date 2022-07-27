@@ -1,13 +1,22 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Callable
 import croniter
+from typing import List
+
+
+@dataclass
+class Task:
+    name: str
+    python_callable: Callable
 
 
 @dataclass
 class Pipeline:
     name: str
     schedule: str
-    python_callable: Callable
+    tasks: List[Task]
+    start_date: datetime = None
 
 
 def validate_pipeline(pipeline: Pipeline):
@@ -17,3 +26,15 @@ def validate_pipeline(pipeline: Pipeline):
         raise TypeError("Pipeline schedule is not a string")
     if not croniter.is_valid(pipeline.schedule):
         raise ValueError("Pipeline schedule is not a valid cron")
+    if not isinstance(pipeline.start_date, datetime):
+        raise TypeError("Pipeline start_date is not a datetime")
+    if not isinstance(pipeline.tasks, List):
+        raise TypeError("Pipeline tasks is not an instance of List")
+    for element in pipeline.tasks:
+        if not isinstance(element, Task):
+            raise TypeError("Pipeline tasks elements are not a Task instance")
+    check_cycles(pipeline.tasks)
+
+
+def check_cycles(tasks: List[Task]):
+    pass
