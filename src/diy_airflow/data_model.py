@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Callable
-import croniter
+from croniter import croniter
 from typing import List
 
 
@@ -16,7 +16,13 @@ class Pipeline:
     name: str
     schedule: str
     tasks: List[Task]
-    start_date: datetime = None
+    start_date: datetime = datetime.now()
+
+    def __eq__(self, other):
+        return self.start_date == other.start_date
+
+    def __lt__(self, other):
+        return self.start_date < other.start_date
 
 
 def validate_pipeline(pipeline: Pipeline):

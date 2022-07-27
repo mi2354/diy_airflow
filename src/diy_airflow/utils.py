@@ -5,7 +5,6 @@ from os.path import isfile, join
 from typing import List, Optional
 
 from diy_airflow.data_model import Pipeline
-from diy_airflow.scheduler import send_to_queue
 
 
 def get_files_from_dir(dirpath: str) -> List[str]:
@@ -23,7 +22,7 @@ def get_pipeline_from_file(filepath: str) -> Optional[Pipeline]:
         Optional[Pipeline]: A Pipeline instance if there is any inside the
                             script in filepath, else None
     """
-    if filepath.endswith('.py'):
+    if filepath.endswith(".py"):
         spec = spec_from_file_location("module.name", filepath)
         mod = module_from_spec(spec)
         sys.modules["module.name"] = mod
@@ -34,6 +33,6 @@ def get_pipeline_from_file(filepath: str) -> Optional[Pipeline]:
 
 
 def process_filepath(filepath: str) -> None:
-        pipeline = get_pipeline_from_file(filepath)
-        if pipeline is not None:
-            send_to_queue(pipeline)
+    pipeline = get_pipeline_from_file(filepath)
+    if pipeline is not None:
+        return pipeline

@@ -5,12 +5,6 @@ def print_hello_world():
     print("Hello guys")
 
 
-task1 = Task(
-    name='task1',
-    python_callable=print_hello_world
-)
+task1 = Task(name="task1", python_callable=print_hello_world)
 
-pipeline = Pipeline(
-    name = 'Hello_world',
-    schedule = '* * * 1 * *',
-    tasks=[task1])
+pipeline = Pipeline(name="Hello_world", schedule="* * * 1 * *", tasks=[task1])
