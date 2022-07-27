@@ -26,6 +26,8 @@ class Pipeline:
 
 
 def validate_pipeline(pipeline: Pipeline):
+    if not isinstance(pipeline, Pipeline):
+        raise TypeError("pipeline provided is not an instance of Pipeline")
     if not isinstance(pipeline.name, str):
         raise TypeError("Pipeline name not a string")
     if not isinstance(pipeline.schedule, str):

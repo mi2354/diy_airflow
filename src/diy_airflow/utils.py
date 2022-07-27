@@ -3,14 +3,19 @@ from importlib.util import module_from_spec, spec_from_file_location
 from os import listdir
 from os.path import isfile, join
 from typing import List, Optional
+from wasabi import msg
 
-from diy_airflow.data_model import Pipeline
+from diy_airflow.data_model import Pipeline, validate_pipeline
+
+from os import listdir
+from os.path import isfile, join
+from typing import List, Optional
 
 
 def get_files_from_dir(dirpath: str) -> List[str]:
     files = []
     for f in listdir(dirpath):
-        if isfile(join(dirpath, f) and f.endswith(".py")):
+        if isfile(join(dirpath, f)) and f.endswith(".py"):
             files.append(join(dirpath, f))
     return files
 
@@ -30,13 +35,22 @@ def get_pipeline_from_file(filepath: str) -> Optional[Pipeline]:
         spec = spec_from_file_location("module.name", filepath)
         mod = module_from_spec(spec)
         sys.modules["module.name"] = mod
-        spec.loader.exec_module(mod)
-        if hasattr(mod, "pipeline") and isinstance(mod.pipeline, Pipeline):
-            print(f"Found pipeline '{mod.pipeline.name}' in {filepath}")
-            return mod.pipeline
+        try:
+            spec.loader.exec_module(mod)
+        except Exception as e:
+            msg.fail(f"Error in module {filepath}, cannot load module")
+        else:
+            if hasattr(mod, "pipeline") and isinstance(mod.pipeline, Pipeline):
+                try:
+                    validate_pipeline(mod.pipeline)
+                    msg.info(f"Pipeline {mod.pipeline.name} from {filepath} is valid!")
+                except TypeError:
+                    msg.fail(f"Pipeline in {filepath} not valid")
+                else:
+                    return mod.pipeline
 
 
-def process_filepath(filepath: str) -> None:
-    pipeline = get_pipeline_from_file(filepath)
-    if pipeline is not None:
-        return pipeline
+def run_pipeline(pipeline: Pipeline):
+    for task in pipeline.tasks:
+        msg.info(f"Starting task {task.name}")
+        task.python_callable()
