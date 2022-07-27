@@ -20,8 +20,8 @@ class Scheduler:
     def run(self):
         if not self.q.empty():
             pipeline: Pipeline = self.q.get()
-            pieline_start_date = pipeline.start_date
-            if pieline_start_date < datetime.now():
+            pipeline_start_date = pipeline.start_date
+            if pipeline_start_date < datetime.now():
                 msg.info(f"Starting pipeline {pipeline.name}")
                 try:
                     run_pipeline(pipeline)
@@ -30,7 +30,7 @@ class Scheduler:
                     print(e)
                 else:
                     msg.good(f"Pipeline {pipeline.name} run successfully!")
-                iter = croniter(pipeline.schedule, pieline_start_date)
+                iter = croniter(pipeline.schedule, pipeline_start_date)
                 next_datetime = iter.get_next(datetime)
                 # With this loop we avoid that a long task blocks our schedule
                 while next_datetime < datetime.now():

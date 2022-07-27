@@ -1,8 +1,10 @@
 from diy_airflow.data_model import Pipeline, Task
 from datetime import datetime
 
+
 def print_second_part():
-    print('Omg, two tasks in one pipeline')
+    print("Omg, two tasks in one pipeline")
+
 
 def print_hello_world():
     print(f"{datetime.now()} - Hello guys, we are executing a pipeline!")
