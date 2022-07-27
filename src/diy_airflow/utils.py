@@ -8,7 +8,11 @@ from diy_airflow.data_model import Pipeline
 
 
 def get_files_from_dir(dirpath: str) -> List[str]:
-    return [join(dirpath, f) for f in listdir(dirpath) if isfile(join(dirpath, f))]
+    files = []
+    for f in listdir(dirpath):
+        if isfile(join(dirpath, f) and f.endswith(".py")):
+            files.append(join(dirpath, f))
+    return files
 
 
 def get_pipeline_from_file(filepath: str) -> Optional[Pipeline]:
