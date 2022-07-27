@@ -1,14 +1,19 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Callable, List
 
 from croniter import croniter
+import networkx as nx
 
 
 @dataclass
 class Task:
     name: str
     python_callable: Callable
+    predecessors : list = field(default_factory=list)
+
+    def set_upstream(self, task):
+        self.predecessors.append(task)
 
 
 @dataclass
@@ -23,6 +28,9 @@ class Pipeline:
 
     def __lt__(self, other):
         return self.start_date < other.start_date
+
+    def _build_graph(self):
+        pass
 
 
 def validate_pipeline(pipeline: Pipeline):
@@ -45,4 +53,14 @@ def validate_pipeline(pipeline: Pipeline):
 
 
 def check_cycles(tasks: List[Task]):
-    pass
+    G = nx.DiGraph()
+    for task in tasks:
+        for predecessor in task.predecessors:
+            G.add_edge(predecessor, task)
+    try:
+        nx.find_cycle(G)
+    except nx.NetworkXNoCycle:
+        return None
+    else:
+        raise nx.HasACycle("Task have cycles!")
+
