@@ -4,6 +4,7 @@ from os import listdir
 from os.path import isfile, join
 from typing import List, Optional
 
+import networkx as nx
 from wasabi import msg
 
 from diy_airflow.data_model import Pipeline, validate_pipeline
@@ -40,14 +41,16 @@ def get_pipeline_from_file(filepath: str) -> Optional[Pipeline]:
             if hasattr(mod, "pipeline") and isinstance(mod.pipeline, Pipeline):
                 try:
                     validate_pipeline(mod.pipeline)
+                    mod.pipeline.build_digraph()
                     msg.info(f"Pipeline {mod.pipeline.name} from {filepath} is valid!")
-                except TypeError:
+                except Exception as e:
                     msg.fail(f"Pipeline in {filepath} not valid")
+                    msg.fail(f"Error in {filepath}: {e}")
                 else:
                     return mod.pipeline
 
 
 def run_pipeline(pipeline: Pipeline):
-    for task in pipeline.tasks:
+    for task in nx.topological_sort(pipeline.G):
         msg.info(f"Starting task {task.name}")
         task.python_callable()

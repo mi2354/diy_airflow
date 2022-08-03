@@ -6,14 +6,14 @@ from croniter import croniter
 import networkx as nx
 
 
-@dataclass
 class Task:
-    name: str
-    python_callable: Callable
-    predecessors : list = field(default_factory=list)
+    def __init__(self, name: str, python_callable: Callable):
+        self.name = name
+        self.python_callable = python_callable
+        self.successors = []
 
-    def set_upstream(self, task):
-        self.predecessors.append(task)
+    def set_downstream(self, task):
+        self.successors.append(task)
 
 
 @dataclass
@@ -28,9 +28,23 @@ class Pipeline:
 
     def __lt__(self, other):
         return self.start_date < other.start_date
+    
+    def build_digraph(self):
+        G = nx.DiGraph()
+        for task in self.tasks:
+            for successor in task.successors:
+                G.add_edge(task, successor)
+        check_no_cycles(G)
+        self.G = G
 
-    def _build_graph(self):
-        pass
+
+def check_no_cycles(G: nx.Graph):
+    try:
+        nx.find_cycle(G)
+    except nx.NetworkXNoCycle:
+        return None
+    else:
+        raise nx.HasACycle("Task has cycles!")
 
 
 def validate_pipeline(pipeline: Pipeline):
@@ -49,18 +63,4 @@ def validate_pipeline(pipeline: Pipeline):
     for element in pipeline.tasks:
         if not isinstance(element, Task):
             raise TypeError("Pipeline tasks elements are not a Task instance")
-    check_cycles(pipeline.tasks)
-
-
-def check_cycles(tasks: List[Task]):
-    G = nx.DiGraph()
-    for task in tasks:
-        for predecessor in task.predecessors:
-            G.add_edge(predecessor, task)
-    try:
-        nx.find_cycle(G)
-    except nx.NetworkXNoCycle:
-        return None
-    else:
-        raise nx.HasACycle("Task have cycles!")
 

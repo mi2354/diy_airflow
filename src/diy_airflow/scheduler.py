@@ -12,13 +12,25 @@ from diy_airflow.utils import run_pipeline
 class Scheduler:
     def __init__(self) -> None:
         self.q = PriorityQueue(maxsize=100)
+        self.queued_ids = []
 
     def add_pipeline(self, pipeline: Optional[Pipeline]) -> None:
         """
         Add pipeline to queue
         """
         if isinstance(pipeline, Pipeline):
-            self.q.put(pipeline)
+            if pipeline.name not in self.queued_ids:
+                self.q.put(pipeline)
+                self.queued_ids.append(pipeline.name)
+            else:
+                new_queue = PriorityQueue(maxsize=100)
+                while not self.q.empty():
+                    queued_pipeline = self.q.get()
+                    if queued_pipeline.name == pipeline.name:
+                        new_queue.put(pipeline)
+                    else:
+                        new_queue.put(queued_pipeline)
+                self.q = new_queue
 
     def run(self):
         """
