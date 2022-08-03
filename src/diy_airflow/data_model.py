@@ -28,7 +28,7 @@ class Pipeline:
 
     def __lt__(self, other):
         return self.start_date < other.start_date
-    
+
     def build_digraph(self):
         G = nx.DiGraph()
         for task in self.tasks:
@@ -63,4 +63,3 @@ def validate_pipeline(pipeline: Pipeline):
     for element in pipeline.tasks:
         if not isinstance(element, Task):
             raise TypeError("Pipeline tasks elements are not a Task instance")
-
