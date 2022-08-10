@@ -11,11 +11,7 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - ./pipelines:/pipelines/
+      - ./pipelines:/app/pipelines
   
 volumes:
   redis-data:
-
-  # redis:
-  #   db:
-  #   build: 
