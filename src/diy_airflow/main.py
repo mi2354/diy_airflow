@@ -1,3 +1,4 @@
+from asyncio.log import logger
 import time
 
 import click
@@ -5,9 +6,13 @@ import click
 from diy_airflow.filechecker import Watcher
 from diy_airflow.scheduler import Scheduler
 from diy_airflow.state_saver import StateSaver
+import logging
 
-
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 def start_scheduler(path: str):
+    print('test', flush=True)
+    logger.info('logging stuff')
     state_saver = StateSaver()
     state_saver.start()
     scheduler = Scheduler(state_saver)
@@ -24,10 +29,11 @@ def start_worker():
 
 @click.command()
 @click.argument("service", type=str)
-@click.option("-p", "--path", type=str, default="examples")
+@click.option("-p", "--path", type=str, default="pipelines")
 def main(service: str, path: str) -> None:
     if service == "scheduler":
         click.echo(f"Selected path: {path}")
+        logging.error('something')
         start_scheduler(path)
     elif service == "worker":
         start_worker()

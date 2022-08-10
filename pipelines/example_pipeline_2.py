@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import logging
 from diy_airflow.data_model import Pipeline, Task
 
 
@@ -20,6 +20,7 @@ def func2():
 
 
 def func1():
+    logging.info('hello')
     print(f"{datetime.now()} - exec func1")
 
 

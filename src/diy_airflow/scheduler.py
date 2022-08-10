@@ -1,3 +1,4 @@
+from distutils import filelist
 from typing import Union
 from datetime import datetime
 from queue import PriorityQueue
@@ -51,6 +52,7 @@ class Scheduler:
                     print(e)
                 else:
                     msg.good(f"Pipeline {pipeline.name} run successfully!")
+                    print("Flush messages! (ignore this line)", flush=True)
                     if self.state_saver:
                         self.state_saver.save_pipeline_run(pipeline)
                 iter = croniter(pipeline.schedule, pipeline_start_date)

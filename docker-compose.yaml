@@ -1,0 +1,21 @@
+version: '3.9'
+services:
+  
+  redis:
+    image: "redis:7.0.4"
+    volumes:
+      - redis-data:/data
+  
+  scheduler:
+    build: .
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./pipelines:/pipelines/
+  
+volumes:
+  redis-data:
+
+  # redis:
+  #   db:
+  #   build: 
