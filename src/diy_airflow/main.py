@@ -7,10 +7,7 @@ from diy_airflow.scheduler import Scheduler
 from diy_airflow.state_saver import StateSaver
 
 
-@click.command()
-@click.argument("path", type=str, default="examples")
-def main(path):
-    click.echo(f"Selected path: {path}")
+def start_scheduler(path: str):
     state_saver = StateSaver()
     state_saver.start()
     scheduler = Scheduler(state_saver)
@@ -19,6 +16,21 @@ def main(path):
         watcher.monitor()
         scheduler.run()
         time.sleep(5)
+
+
+def start_worker():
+    pass
+
+
+@click.command()
+@click.argument("service", type=str)
+@click.option("-p", "--path", type=str, default="examples")
+def main(service: str, path: str) -> None:
+    if service == "scheduler":
+        click.echo(f"Selected path: {path}")
+        start_scheduler(path)
+    elif service == "worker":
+        start_worker()
 
 
 if __name__ == "__main__":
