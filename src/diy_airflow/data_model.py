@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Callable, List
+from typing import Callable, List, Optional
 
 from croniter import croniter
 import networkx as nx
@@ -16,12 +16,19 @@ class Task:
         self.successors.append(task)
 
 
-@dataclass
 class Pipeline:
-    name: str
-    schedule: str
-    tasks: List[Task]
-    start_date: datetime = datetime.now()
+    G: nx.DiGraph
+    def __init__(
+        self,
+        name: str,
+        schedule: str,
+        tasks: List[Task],
+        start_date: Optional[datetime] = datetime.now(),
+    ) -> None:
+        self.name = name
+        self.schedule = schedule
+        self.tasks = tasks
+        self.start_date = start_date
 
     def __eq__(self, other):
         return self.start_date == other.start_date
@@ -36,6 +43,9 @@ class Pipeline:
                 G.add_edge(task, successor)
         check_no_cycles(G)
         self.G = G
+
+    def build_id(self):
+        self.id = f"{self.name}-{self.start_date}"
 
 
 def check_no_cycles(G: nx.Graph):
