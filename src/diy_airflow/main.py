@@ -26,6 +26,8 @@ def start_worker():
     worker = Worker(state_saver)
     while True:
         worker.run()
+        time.sleep(5)
+        print('worker actually run')
 
 
 @click.command()

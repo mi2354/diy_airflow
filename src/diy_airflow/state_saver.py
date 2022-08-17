@@ -10,6 +10,7 @@ REDIS_HOST = os.getenv("REDIS_HOST", default="localhost")
 class StateSaver:
     def start(self):
         self.r = Redis(host=REDIS_HOST)
+        # self.r.flushdb() # Ask how to deal with this
 
     def save_pipeline_run(self, pipeline: Pipeline):
         name = pipeline.name
