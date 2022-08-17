@@ -8,8 +8,15 @@ services:
   
   scheduler:
     build: .
+    command: scheduler
     ports:
       - "9000:9000"
+    volumes:
+      - ./pipelines:/app/pipelines
+  
+  worker:
+    build: .
+    command: worker
     volumes:
       - ./pipelines:/app/pipelines
   

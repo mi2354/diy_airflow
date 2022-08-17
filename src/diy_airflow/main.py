@@ -6,6 +6,7 @@ import click
 from diy_airflow.filechecker import Watcher
 from diy_airflow.scheduler import Scheduler
 from diy_airflow.state_saver import StateSaver
+from diy_airflow.worker import Worker
 
 
 def start_scheduler(path: str):
@@ -20,7 +21,11 @@ def start_scheduler(path: str):
 
 
 def start_worker():
-    pass
+    state_saver = StateSaver()
+    state_saver.start()
+    worker = Worker(state_saver)
+    while True:
+        worker.run()
 
 
 @click.command()

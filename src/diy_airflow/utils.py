@@ -4,10 +4,9 @@ from os import listdir
 from os.path import isfile, join
 from typing import List, Optional
 
-import networkx as nx
 from wasabi import msg
 
-from diy_airflow.data_model import Pipeline, validate_pipeline
+from diy_airflow.data_model import Pipeline, Task, validate_pipeline
 
 
 def get_files_from_dir(dirpath: str) -> List[str]:
@@ -47,10 +46,14 @@ def get_pipeline_from_file(filepath: str) -> Optional[Pipeline]:
                     msg.fail(f"Pipeline in {filepath} not valid")
                     msg.fail(f"Error in {filepath}: {e}")
                 else:
+                    mod.pipeline.filepath = filepath
                     return mod.pipeline
 
 
-def run_pipeline(pipeline: Pipeline):
-    for task in nx.topological_sort(pipeline.G):
-        msg.info(f"Starting task {task.name}")
-        task.python_callable()
+# def send_pipeline_todo_pool(pipeline: Pipeline):
+#     pipeline.build_ids()
+#     taks_to_run = pipeline.get_sorted_task_ids()
+#     for task in pipeline.sorted_tasks:
+#         print(task.task_id, flush=True)
+#         msg.info(f"Starting task {task.name}")
+#         task.python_callable()

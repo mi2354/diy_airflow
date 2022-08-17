@@ -9,4 +9,4 @@ COPY . .
 # It will detect that the packages are already installed, so it will not install them again
 RUN pip install .
 ENTRYPOINT [ "diy_airflow" ]
-CMD ["scheduler"]
+# CMD ["scheduler"]
