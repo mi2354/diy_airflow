@@ -12,6 +12,7 @@ from diy_airflow.worker import Worker
 def start_scheduler(path: str):
     state_saver = StateSaver()
     state_saver.start()
+    state_saver.r.flushdb()  # Ask how to deal with this
     scheduler = Scheduler(state_saver)
     watcher = Watcher(path, scheduler)
     while True:
@@ -27,7 +28,6 @@ def start_worker():
     while True:
         worker.run()
         time.sleep(5)
-        print('worker actually run')
 
 
 @click.command()

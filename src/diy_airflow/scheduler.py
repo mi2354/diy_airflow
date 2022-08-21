@@ -81,7 +81,11 @@ class Scheduler:
         for s_pipeline in self.todo_pool:
             predecessors = s_pipeline.graph.pred
             for task in predecessors:
-                if not predecessors[task]:
+                if (
+                    not predecessors[task]
+                    and self.state_saver.check_status(f"{s_pipeline.id}:{task}")
+                    == Status.NOT_SCHEDULED
+                ):
                     s_task = SimpleTask(
                         pipeline_id=s_pipeline.id,
                         name=task,
@@ -98,12 +102,12 @@ class Scheduler:
             for node in s_pipeline.graph:
                 status = self.state_saver.check_status(f"{s_pipeline.id}:{node}")
                 if status == Status.FINISHED:
+                    print(f"status of {s_pipeline.id}:{node}:", status)
                     to_delete.append([i, node])
-
         for element in to_delete:
-            self.todo_pool[0].graph.remove_node(element[1])
+            self.todo_pool[element[0]].graph.remove_node(element[1])
 
-        finished = [x for x in self.todo_pool if nx.is_empty(x.graph)]
+        finished = [x for x in self.todo_pool if x.graph.number_of_nodes() == 0]
         if finished:
             print("finished:", finished, flush=True)
         self.todo_pool = [x for x in self.todo_pool if x not in finished]
