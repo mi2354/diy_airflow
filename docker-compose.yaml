@@ -19,6 +19,8 @@ services:
     command: worker
     volumes:
       - ./pipelines:/app/pipelines
+    depends_on:
+      - scheduler
   
 volumes:
   redis-data:

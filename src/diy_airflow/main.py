@@ -10,9 +10,11 @@ from diy_airflow.worker import Worker
 
 
 def start_scheduler(path: str):
+    print("Booting up scheduler", flush=True)
     state_saver = StateSaver()
     state_saver.start()
-    state_saver.r.flushdb()  # Ask how to deal with this
+    state_saver.r.flushdb()  # Problem comes from repeated keys in redis.
+    # Check https://stdworkflow.com/383/redis-wrongtype-operation-against-a-key-holding-the-wrong-kind-of-value
     scheduler = Scheduler(state_saver)
     watcher = Watcher(path, scheduler)
     while True:
@@ -22,6 +24,7 @@ def start_scheduler(path: str):
 
 
 def start_worker():
+    print("Booting up worker", flush=True)
     state_saver = StateSaver()
     state_saver.start()
     worker = Worker(state_saver)
