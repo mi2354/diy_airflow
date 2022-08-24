@@ -22,6 +22,7 @@ class Worker:
                             print("Task failed!", flush=True)
                             self.state_saver.save_status(task_id, Status.FINISHED_FAIL)
                         else:
+                            print(f"Finished task {task_id}", flush=True)
                             self.state_saver.save_status(
                                 task_id, Status.FINISHED_SUCCESS
                             )

@@ -1,4 +1,20 @@
-# Scheduler assignment
+# diy_airflow
+
+Home made orchestrator written in Python. Uses Redis and can be run in Docker Compose.
+
+## Improvements
+- wasabi doesn't have the option `flush=True`, PR to add that?
+- Fix repeated keys issue, so we don't need flushdb every time
+- Add docstrings
+- send ping to worker to see it's still alive
+
+## Useful commands:
+- `docker compose up --build`
+- `docker compose down`
+- `docker logs diy-airflow-worker-1 -f` to monitor the logs of the worker
+
+---
+## Scheduler assignment
 
 We want to build a scheduler that can run a sequence of tasks in the right order.
 
@@ -57,6 +73,4 @@ The overall usage of this command line program will be something along the lines
 You can use the croniter package to deal with parsing the cron string
 
 
-## Improvements
-- wasabi doesn't have the option `flush=True`, PR to add that?
-- Fix repeated keys issue, so we don't need flushdb every time
+

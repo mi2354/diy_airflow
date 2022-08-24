@@ -114,7 +114,7 @@ class Scheduler:
         finished = [x for x in self.todo_pool if x.graph.number_of_nodes() == 0]
         if finished:
             for s_pipeline in finished:
-                print(f"Finished pipeline:{s_pipeline.id}", flush=True)
+                print(f"Finished pipeline: {s_pipeline.id}", flush=True)
         self.todo_pool = [x for x in self.todo_pool if x not in finished]
 
     def run(self):
