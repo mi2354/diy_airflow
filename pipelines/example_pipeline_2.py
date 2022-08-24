@@ -6,8 +6,10 @@ from time import sleep
 def func7():
     print(f"{datetime.now()} - exec func7")
 
+
 def func6():
     print(f"{datetime.now()} - exec func6")
+
 
 def func5():
     print(f"{datetime.now()} - exec func5")
