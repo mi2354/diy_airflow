@@ -1,6 +1,5 @@
 import os
 
-# from diy_airflow.data_model import Pipeline
 from diy_airflow.scheduler import Scheduler
 from diy_airflow.utils import get_files_from_dir, get_pipeline_from_file
 

@@ -57,8 +57,5 @@ The overall usage of this command line program will be something along the lines
 You can use the croniter package to deal with parsing the cron string
 
 
-# Run instructions
-```
-$ poetry install
-$ diy_airflow path/to/dags.py
-```
+## Improvements
+- wasabi doesn't have the option `flush=True`, PR to add that?

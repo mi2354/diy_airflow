@@ -1,6 +1,6 @@
 from enum import Enum
 from redis import Redis
-from diy_airflow.data_model import Pipeline, Status, Task
+from diy_airflow.data_model import Pipeline, Status, SimpleTask
 import os
 import json
 
@@ -19,19 +19,17 @@ class StateSaver:
     def add_to_pool_ready(self, element: dict):
         json_element = json.dumps(element)
         self.r.rpush("PoolReady", json_element)
-        # print(f"Save PoolReady: {json_element}", flush=True)
 
-    def get_from_pool_ready(self):
+    def get_from_pool_ready(self) -> SimpleTask:
         x = self.r.lpop("PoolReady")
         if x is not None:
             s_task = json.loads(x)
-            return s_task
+            return SimpleTask(**s_task)
 
     def save_status(self, name: str, status: Enum):
-        print(f"Save state: {[name, status.value]}", flush=True)
         self.r.set(name, status.value)
 
-    def check_status(self, name: str):
+    def check_status(self, name: str) -> Status:
         x = self.r.get(name)
         if isinstance(x, bytes):
             return Status(int(x))

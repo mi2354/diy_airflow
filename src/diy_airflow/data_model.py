@@ -61,23 +61,10 @@ class Pipeline:
         check_no_cycles(G)
         self.G = G
 
-    # def build_sorted_tasks(self):
-    #     self._build_digraph()
-    #     self.sorted_tasks = list(nx.topological_sort(self.G))
-
     def build_ids(self):
         self.id_ = f"{self.name}-{self.start_date}"
         for task in self.task_list:
             task.task_id = f"{self.id_}-{task.name}"
-
-    # def get_sorted_task_ids(self) -> List[str]:
-    #     # TODO: This is extremely inefficient... Change it when everything works
-    #     sorted_task_ids = []
-    #     for sorted_task in self.sorted_tasks:
-    #         for task in self.task_list:
-    #             if sorted_task.name == task.name:
-    #                 sorted_task_ids.append(task.task_id)
-    #     return sorted_task_ids
 
 
 @dataclass
@@ -97,7 +84,8 @@ class SimpleTask:
 class Status(Enum):
     WAITING = auto()
     RUNNING = auto()
-    FINISHED = auto()
+    FINISHED_SUCCESS = auto()
+    FINISHED_FAIL = auto()
     NOT_SCHEDULED = None
 
 

@@ -4,8 +4,6 @@ from os import listdir
 from os.path import isfile, join
 from typing import List, Optional
 
-from wasabi import msg
-
 from diy_airflow.data_model import Pipeline, Task, validate_pipeline
 
 
@@ -35,25 +33,15 @@ def get_pipeline_from_file(filepath: str) -> Optional[Pipeline]:
         try:
             spec.loader.exec_module(mod)
         except Exception as e:
-            msg.fail(f"Error in module {filepath}, cannot load module")
+            print(f"Error in module {filepath}, cannot load module", flush=True)
         else:
             if hasattr(mod, "pipeline") and isinstance(mod.pipeline, Pipeline):
                 try:
                     validate_pipeline(mod.pipeline)
                     mod.pipeline.build_digraph()
-                    msg.info(f"Pipeline {mod.pipeline.name} from {filepath} is valid!")
                 except Exception as e:
-                    msg.fail(f"Pipeline in {filepath} not valid")
-                    msg.fail(f"Error in {filepath}: {e}")
+                    print(f"Pipeline in {filepath} not valid", flush=True)
+                    print(f"Error in {filepath}: {e}", flush=True)
                 else:
                     mod.pipeline.filepath = filepath
                     return mod.pipeline
-
-
-# def send_pipeline_todo_pool(pipeline: Pipeline):
-#     pipeline.build_ids()
-#     taks_to_run = pipeline.get_sorted_task_ids()
-#     for task in pipeline.sorted_tasks:
-#         print(task.task_id, flush=True)
-#         msg.info(f"Starting task {task.name}")
-#         task.python_callable()

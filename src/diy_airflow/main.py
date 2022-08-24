@@ -1,4 +1,4 @@
-from asyncio.log import logger
+import sys
 import time
 
 import click
@@ -7,6 +7,8 @@ from diy_airflow.filechecker import Watcher
 from diy_airflow.scheduler import Scheduler
 from diy_airflow.state_saver import StateSaver
 from diy_airflow.worker import Worker
+
+sys.stdout.flush
 
 
 def start_scheduler(path: str):

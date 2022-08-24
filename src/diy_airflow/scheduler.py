@@ -5,8 +5,6 @@ from queue import PriorityQueue
 from typing import Optional
 
 from croniter import croniter
-from wasabi import msg
-import networkx as nx
 
 from diy_airflow.data_model import Pipeline, Status, SimplePipeline, SimpleTask
 from diy_airflow.state_saver import StateSaver
@@ -49,7 +47,6 @@ class Scheduler:
 
             pipeline_start_date = pipeline.start_date
             if pipeline_start_date < datetime.now():
-                msg.info(f"Scheduling pipeline {pipeline.name}...")
                 try:
                     todo_element = SimplePipeline(
                         id=pipeline.id_,
@@ -58,11 +55,10 @@ class Scheduler:
                     )
                     self.todo_pool.append(todo_element)
                 except Exception as e:
-                    msg.fail(f"Failed to schedule pipeline {pipeline.name}")
+                    print(f"Failed to schedule pipeline {pipeline.name}", flush=True)
                     print(e)
                 else:
-                    msg.info(f"Pipeline {pipeline.name} scheduled!")
-                    print("Flush messages! (ignore this line)", flush=True)
+                    print(f"Pipeline {pipeline.name} scheduled!", flush=True)
                     if self.state_saver:
                         self.state_saver.save_pipeline_run(pipeline)
                 iter = croniter(pipeline.schedule, pipeline_start_date)
@@ -101,15 +97,24 @@ class Scheduler:
         for i, s_pipeline in enumerate(self.todo_pool):
             for node in s_pipeline.graph:
                 status = self.state_saver.check_status(f"{s_pipeline.id}:{node}")
-                if status == Status.FINISHED:
-                    print(f"status of {s_pipeline.id}:{node}:", status)
+                if status == Status.FINISHED_SUCCESS:
                     to_delete.append([i, node])
+                elif status == Status.FINISHED_FAIL:
+                    # If failed, we don't want to continue with the pipeline,
+                    # so we add all nodes to to_delete
+                    for n in s_pipeline.graph:
+                        to_delete.append([i, n])
+
         for element in to_delete:
-            self.todo_pool[element[0]].graph.remove_node(element[1])
+            if (
+                element[1] in self.todo_pool[element[0]].graph
+            ):  # Ugly, need to check instances
+                self.todo_pool[element[0]].graph.remove_node(element[1])
 
         finished = [x for x in self.todo_pool if x.graph.number_of_nodes() == 0]
         if finished:
-            print("finished:", finished, flush=True)
+            for s_pipeline in finished:
+                print(f"Finished pipeline:{s_pipeline.id}", flush=True)
         self.todo_pool = [x for x in self.todo_pool if x not in finished]
 
     def run(self):
