@@ -59,3 +59,4 @@ You can use the croniter package to deal with parsing the cron string
 
 ## Improvements
 - wasabi doesn't have the option `flush=True`, PR to add that?
+- Fix repeated keys issue, so we don't need flushdb every time
