@@ -9,30 +9,21 @@ import networkx as nx
 
 class Task:
     pipeline_id: str
-    pipeline_start_date: datetime
-    relative_order: int
     task_id: str
-    predecessors: list
     successors: list
 
     def __init__(self, name: str, python_callable: Callable):
         self.name = name
         self.python_callable = python_callable
         self.successors = []
-        self.predecessors = []
 
     def set_downstream(self, task):
         self.successors.append(task)
-        task._set_predecessor(self.name)
-
-    def _set_predecessor(self, pred_name):
-        self.predecessors.append(pred_name)
 
 
 class Pipeline:
     G: nx.DiGraph
     id_: str
-    sorted_tasks: List[Task]
     filepath: str
 
     def __init__(

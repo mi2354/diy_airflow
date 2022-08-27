@@ -3,14 +3,18 @@
 Home made orchestrator written in Python. Uses Redis and can be run in Docker Compose.
 
 ## Improvements
-- wasabi doesn't have the option `flush=True`, PR to add that?
 - Fix repeated keys issue, so we don't need flushdb every time
 - Add docstrings
 - send ping to worker to see it's still alive
+- Implement health checks to verify we can boot up scheduler before redis and worker before scheduler
+- implement timestamps in logs
+- Improve id handling
 
 ## Useful commands:
 - `docker compose up --build`
+- `docker-compose up --force-recreate`
 - `docker compose down`
+- `docker-compose up --force-recreate`
 - `docker logs diy-airflow-worker-1 -f` to monitor the logs of the worker
 
 ---

@@ -1,8 +1,11 @@
-from enum import Enum
-from redis import Redis
-from diy_airflow.data_model import Pipeline, Status, SimpleTask
-import os
 import json
+import os
+from dataclasses import asdict
+from enum import Enum
+
+from redis import Redis
+
+from diy_airflow.data_model import Pipeline, SimpleTask, Status
 
 REDIS_HOST = os.getenv("REDIS_HOST", default="localhost")
 
@@ -16,7 +19,8 @@ class StateSaver:
         run = pipeline.start_date.strftime("%Y/%m/%d, %H:%M:%S")
         self.r.rpush(name, run)
 
-    def add_to_pool_ready(self, element: dict):
+    def add_to_pool_ready(self, s_task: SimpleTask):
+        element = asdict(s_task)
         json_element = json.dumps(element)
         self.r.rpush("PoolReady", json_element)
 

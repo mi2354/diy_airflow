@@ -19,18 +19,12 @@ services:
   worker:
     build: .
     command: worker
+    deploy:
+      replicas: 2
     volumes:
       - ./pipelines:/app/pipelines
     depends_on:
       - scheduler
 
-  worker_2:
-    build: .
-    command: worker
-    volumes:
-      - ./pipelines:/app/pipelines
-    depends_on:
-      - scheduler
-  
 volumes:
   redis-data:

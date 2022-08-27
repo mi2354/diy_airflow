@@ -1,10 +1,10 @@
-from dataclasses import asdict
 from typing import List, Union
 from datetime import datetime
 from queue import PriorityQueue
 from typing import Optional
 
 from croniter import croniter
+from wasabi import msg
 
 from diy_airflow.data_model import Pipeline, Status, SimplePipeline, SimpleTask
 from diy_airflow.state_saver import StateSaver
@@ -55,10 +55,10 @@ class Scheduler:
                     )
                     self.todo_pool.append(todo_element)
                 except Exception as e:
-                    print(f"Failed to schedule pipeline {pipeline.name}", flush=True)
+                    msg.fail(f"Failed to schedule pipeline {pipeline.name}", flush=True)
                     print(e)
                 else:
-                    print(f"Pipeline {pipeline.name} scheduled!", flush=True)
+                    msg.info(f"Pipeline {pipeline.name} scheduled!")
                     if self.state_saver:
                         self.state_saver.save_pipeline_run(pipeline)
                 iter = croniter(pipeline.schedule, pipeline_start_date)
@@ -87,7 +87,7 @@ class Scheduler:
                         name=task,
                         filepath=s_pipeline.filepath,
                     )
-                    self.state_saver.add_to_pool_ready(asdict(s_task))
+                    self.state_saver.add_to_pool_ready(s_task)
                     self.state_saver.save_status(
                         f"{s_pipeline.id}:{task}", Status.WAITING
                     )
@@ -114,7 +114,7 @@ class Scheduler:
         finished = [x for x in self.todo_pool if x.graph.number_of_nodes() == 0]
         if finished:
             for s_pipeline in finished:
-                print(f"Finished pipeline: {s_pipeline.id}", flush=True)
+                msg.good(f"Finished pipeline: {s_pipeline.id}")
         self.todo_pool = [x for x in self.todo_pool if x not in finished]
 
     def run(self):

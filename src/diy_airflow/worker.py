@@ -1,3 +1,5 @@
+from wasabi import msg
+
 from diy_airflow.state_saver import StateSaver
 from diy_airflow.data_model import Status
 from diy_airflow.utils import get_pipeline_from_file
@@ -19,10 +21,10 @@ class Worker:
                             self.state_saver.save_status(task_id, Status.RUNNING)
                             task.python_callable()
                         except:
-                            print("Task failed!", flush=True)
+                            msg.fail("Task failed!")
                             self.state_saver.save_status(task_id, Status.FINISHED_FAIL)
                         else:
-                            print(f"Finished task {task_id}", flush=True)
+                            msg.info(f"Finished task {task_id}")
                             self.state_saver.save_status(
                                 task_id, Status.FINISHED_SUCCESS
                             )

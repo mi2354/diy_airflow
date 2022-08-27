@@ -1,4 +1,3 @@
-import sys
 import time
 
 import click
@@ -8,11 +7,10 @@ from diy_airflow.scheduler import Scheduler
 from diy_airflow.state_saver import StateSaver
 from diy_airflow.worker import Worker
 
-sys.stdout.flush
 
 
 def start_scheduler(path: str):
-    print("Booting up scheduler", flush=True)
+    print("Booting up scheduler")
     state_saver = StateSaver()
     state_saver.start()
     state_saver.r.flushdb()  # Problem comes from repeated keys in redis.
@@ -26,7 +24,7 @@ def start_scheduler(path: str):
 
 
 def start_worker():
-    print("Booting up worker", flush=True)
+    print("Booting up worker")
     state_saver = StateSaver()
     state_saver.start()
     worker = Worker(state_saver)
