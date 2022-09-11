@@ -93,6 +93,9 @@ class Scheduler:
                     )
 
     def update_finished(self):
+        """
+        Check if any task has finished and if so, update pipeline status
+        """
         to_delete = []
         for i, s_pipeline in enumerate(self.todo_pool):
             for node in s_pipeline.graph:

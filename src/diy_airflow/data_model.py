@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Callable, List, Optional, Tuple
 from enum import Enum, auto
+from typing import Any, Callable, List, Optional, Tuple
 
-from croniter import croniter
 import networkx as nx
+from croniter import croniter
 
 
 class Task:
@@ -13,11 +13,26 @@ class Task:
     successors: list
 
     def __init__(self, name: str, python_callable: Callable):
+        """
+        Basic unit of execution. Tasks are arranged in Pipelines.
+
+        Args:
+            name (str): An identification of the task
+            python_callable (Callable): The python function that
+                needs to be executed in this task
+        """
         self.name = name
         self.python_callable = python_callable
         self.successors = []
 
     def set_downstream(self, task):
+        """
+        Set the successor task. Multiple successors are possible
+        executing this method multiple times
+
+        Args:
+            task (Task): The successor task that needs to run
+        """
         self.successors.append(task)
 
 
@@ -33,6 +48,19 @@ class Pipeline:
         task_list: List[Task],
         start_date: Optional[datetime] = datetime.now(),
     ) -> None:
+        """
+        Collection of tasks that need to run in a certain order. It's the equivalent of
+        DAGs in Airflow.
+
+        Args:
+            name (str): Identification for the pipeline
+            schedule (str): A valid cron string, like "* * * * *"
+            task_list (List[Task]): A list of tasks that need to run,
+                order doesn't matter
+            start_date (Optional[datetime], optional): The date when
+                the pipeline needs to run for the first time.
+                Defaults to datetime.now().
+        """
         self.name = name
         self.schedule = schedule
         self.task_list = task_list
@@ -81,6 +109,18 @@ class Status(Enum):
 
 
 def check_no_cycles(G: nx.Graph):
+    """
+    Check wether a nx.Graph has cycles, and if it does, raise an exception
+
+    Args:
+        G (nx.Graph): Any graph
+
+    Raises:
+        nx.HasACycle: When the graph has a cycle
+
+    Returns:
+        None: A python None
+    """
     try:
         nx.find_cycle(G)
     except nx.NetworkXNoCycle:
@@ -89,7 +129,14 @@ def check_no_cycles(G: nx.Graph):
         raise nx.HasACycle("Task has cycles!")
 
 
-def validate_pipeline(pipeline: Pipeline):
+def validate_pipeline(pipeline: Any):
+    """
+    Given any python object, check if it's a diy_airflow.data_model.Pipeline
+    If it's not, an Exception will be raised.
+
+    Args:
+        pipeline (Any): Any object that we expect is a pipeline
+    """
     if not isinstance(pipeline, Pipeline):
         raise TypeError("pipeline provided is not an instance of Pipeline")
     if not isinstance(pipeline.name, str):

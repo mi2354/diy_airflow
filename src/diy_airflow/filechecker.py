@@ -1,7 +1,7 @@
 import os
 
 from diy_airflow.scheduler import Scheduler
-from diy_airflow.utils import get_files_from_dir, get_pipeline_from_file
+from diy_airflow.utils import get_pipeline_from_file, get_py_files_from_dir
 
 
 class Watcher:
@@ -15,7 +15,7 @@ class Watcher:
         Check if there are changes in self.directory_to_watch and if so
         get the pipelines and adds them to the scheduler
         """
-        dirfiles = get_files_from_dir(self.directory_to_watch)
+        dirfiles = get_py_files_from_dir(self.directory_to_watch)
         for filepath in dirfiles:
             modification_time = os.path.getmtime(filepath)
             if (

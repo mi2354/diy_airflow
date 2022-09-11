@@ -8,7 +8,6 @@ from diy_airflow.state_saver import StateSaver
 from diy_airflow.worker import Worker
 
 
-
 def start_scheduler(path: str):
     print("Booting up scheduler")
     state_saver = StateSaver()

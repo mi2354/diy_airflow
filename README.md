@@ -1,20 +1,30 @@
 # diy_airflow
 
-Home made orchestrator written in Python. Uses Redis and can be run in Docker Compose.
+Home made orchestrator written in Python. Uses Redis and can be run in Docker Compose or locally by pip installing the repository. This orchestrator was born from an assignment (you can find it below).
 
-## Improvements
-- Fix repeated keys issue, so we don't need flushdb every time
-- Add docstrings
-- send ping to worker to see it's still alive
+## Install and run instructions
+```bash
+pip install .
+diy_airflow scheduler
+diy_airflow worker # in another terminal
+```
+You can add your pipelines in the pipelines folder or specify a folder when starting the scheduler (`--p your_folder`).
+
+## (Future?) Improvements
+- Fix repeated keys issue, so we don't need flushdb every time. This would allow to continue work if we pause the execution and continue another day.
+- Send ping to worker to see it's still alive
 - Implement health checks to verify we can boot up scheduler before redis and worker before scheduler
-- implement timestamps in logs
+- Implement timestamps in logs
 - Improve id handling
+- Improve unit test coverage
+- Improve prints/logs -> they look nice now, but they are not handy!
+- switch to `install_requires = file:` when setuptools includes this option in a stable version (now in beta)
 
 ## Useful commands:
 - `docker compose up --build`
 - `docker-compose up --force-recreate`
 - `docker compose down`
-- `docker-compose up --force-recreate`
+- `docker-compose down -v --remove-orphans` to purge containers that were not deleted due to errors in previous executions
 - `docker logs diy-airflow-worker-1 -f` to monitor the logs of the worker
 
 ---

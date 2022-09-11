@@ -9,7 +9,7 @@ from wasabi import msg
 from diy_airflow.data_model import Pipeline, Task, validate_pipeline
 
 
-def get_files_from_dir(dirpath: str) -> List[str]:
+def get_py_files_from_dir(dirpath: str) -> List[str]:
     files = []
     for f in listdir(dirpath):
         if isfile(join(dirpath, f)) and f.endswith(".py"):
@@ -42,7 +42,9 @@ def get_pipeline_from_file(filepath: str) -> Optional[Pipeline]:
                     validate_pipeline(mod.pipeline)
                     mod.pipeline.build_digraph()
                 except Exception as e:
-                    msg.fail(f"Pipeline in {filepath} not valid\n{e}",)
+                    msg.fail(
+                        f"Pipeline in {filepath} not valid\n{e}",
+                    )
                 else:
                     mod.pipeline.filepath = filepath
                     return mod.pipeline
